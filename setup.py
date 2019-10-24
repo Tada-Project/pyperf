@@ -26,7 +26,7 @@
 #  - git commit -a -m "post-release"
 #  - git push
 
-VERSION = '1.6.1'
+VERSION = '0.0.28'
 
 DESCRIPTION = 'Python module to run and analyze benchmarks'
 CLASSIFIERS = [

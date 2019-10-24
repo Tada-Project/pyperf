@@ -62,7 +62,7 @@ class Runner:
                  loops=0, min_time=0.1, metadata=None,
                  show_name=True,
                  program_args=None, add_cmdline_args=None,
-                 _argparser=None):
+                 _argparser=None, runningtime = 0):
 
         # Watchdog: ensure that only once instance of Runner (or a Runner
         # subclass) is created per process to prevent bad suprises
@@ -476,7 +476,6 @@ class Runner:
             local_func = func
             if loops != 1:
                 range_it = range(loops)
-
                 t0 = local_timer()
                 for _ in range_it:
                     local_func()

@@ -2,6 +2,8 @@ from __future__ import division, print_function, absolute_import
 
 import sys
 import subprocess
+import time
+
 
 from pyperf._bench import _load_suite_from_pipe
 from pyperf._cli import format_run
@@ -15,7 +17,7 @@ MAX_CALIBRATION = 5
 
 
 class Master(object):
-    def __init__(self, runner, python=None):
+    def __init__(self, runner, python=None, total_eplapsed=0):
         self.runner = runner
         self.args = runner.args
         if python:
@@ -28,6 +30,7 @@ class Master(object):
         self.next_run = 'loops'
         self.calibrate_loops = int(not self.args.loops)
         self.calibrate_warmups = int(self.args.warmups is None)
+        self.total_eplapsed = runner.runningtime
 
     def worker_cmd(self, calibrate_loops, calibrate_warmups, wpipe):
         args = self.args
@@ -211,17 +214,29 @@ class Master(object):
             self.next_run = 'loops'
         # else: keep action 'values'
 
+
     def create_bench(self):
         old_warmups = self.args.warmups
         old_loops = self.args.loops
         if self.args.warmups is None:
             self.args.warmups = 1
-
+        i = 1
         while self.nprocess < self.need_nprocess:
+            start = time.time()
             worker_bench, run = self.create_worker_bench()
             self.display_run(worker_bench, run)
             self.handle_calibration(run)
+            print("this is round:", i)
+            end = time.time()
+            eplapsed = end - start
+            print("Current experiement run time", eplapsed)
+            self.total_eplapsed += eplapsed
+            print("Total run time in this round", self.total_eplapsed)
+            if self.total_eplapsed > 8:
+                print("Longer than 8s")
+                break
             self.choose_next_run()
+            i = i+1
 
         # restore the old value of warmups and loops, to recalibrate
         # the next benchmark function if needed

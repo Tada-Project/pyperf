@@ -37,6 +37,7 @@ class WorkerTask:
         self.args = args
         self.task_func = task_func
         self.loops = args.loops
+        self.total = runner.runningtime
 
         self.metadata = dict(runner.metadata)
         if func_metadata:
@@ -48,6 +49,7 @@ class WorkerTask:
         self.inner_loops = None
         self.warmups = None
         self.values = ()
+        self.maxruntime = runner.runningtime
 
     def _compute_values(self, values, nvalue,
                         is_warmup=False,
@@ -69,12 +71,20 @@ class WorkerTask:
         inner_loops = self.inner_loops
         if not inner_loops:
             inner_loops = 1
+        # total = 0
         while True:
             if index > nvalue:
                 break
+            if self.maxruntime > 8:
+                print("finally break!")
+                break
 
-            raw_value = self.task_func(self, self.loops)
+            raw_value = self.task_func(self, self.loops, self.total)
             raw_value = float(raw_value)
+            # total += raw_value
+            # if total > 8:
+            #     print("current running time", total)
+            #     sys.exit(1)
             value = raw_value / (self.loops * inner_loops)
 
             if not value and not calibrate_loops:
