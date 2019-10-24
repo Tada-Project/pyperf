@@ -75,11 +75,12 @@ class WorkerTask:
         while True:
             if index > nvalue:
                 break
+            print("maxruntime", self.maxruntime)
             if self.maxruntime > 8:
                 print("finally break!")
                 break
 
-            raw_value = self.task_func(self, self.loops, self.total)
+            raw_value = self.task_func(self, self.loops)
             raw_value = float(raw_value)
             # total += raw_value
             # if total > 8:

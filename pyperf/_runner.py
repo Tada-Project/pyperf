@@ -66,6 +66,7 @@ class Runner:
 
         # Watchdog: ensure that only once instance of Runner (or a Runner
         # subclass) is created per process to prevent bad suprises
+        self.runningtime = runningtime
         cls = self.__class__
         key = id(cls)
         if key in cls._created:
